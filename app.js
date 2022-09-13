@@ -83,12 +83,21 @@ app.use(function(err, req, res, next) {
 config: err.config || 'no config',
   originalUrl: req.originalUrl || 'none',
   method: req.method || 'no method',
-  ip: req.ip || 'no ip',
+   
 body_of_message: req.body || 'no request body'});
    // ${err.status || 500} - ${err.message} - ${err.stack}  - ${ (err.config)?JSON.stringify(err.config): 'no config error' } - ${req.originalUrl} - ${req.method}  - ${req.ip} - ${JSON.stringify(req.body)}`);
  
   // render the error page
   //res.status(err.status || 500);
+
+
+
+
+
+
+  
+
+
   handleError(err, res);
   //res.json({error: err.message});
 });
