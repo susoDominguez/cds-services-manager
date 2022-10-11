@@ -8,7 +8,7 @@ module.exports = {
   getServices: async function (req, res, next) {
     //get input data
     const hookId = res.locals.hook;
-    logger.info(`hookID is ${hookId}`);
+    //logger.info(`hookID is ${hookId}`);
     
     //data Map
     const hookEntries = res.locals.entries;

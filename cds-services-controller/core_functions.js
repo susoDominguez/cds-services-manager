@@ -1,25 +1,5 @@
 "use strict";
 const {
-  paramName,
-  functLabel,
-  argList,
-  outcome,
-  details,
-  resultArgListIndex,
-  resultList,
-  typePath,
-  actionList,
-  action,
-  pathListIndex,
-  pathList,
-  isMandatory,
-  xpath,
-  comparison,
-  defaultVal,
-  compare,
-  findRef,
-  functName,
-  dataMap,
 } = require("../database_modules/constants.js");
 const { ErrorHandler } = require("../lib/errorHandler");
 const logger = require("../config/winston");
@@ -36,13 +16,13 @@ module.exports = {
   getMapValue: function ( key, map, isDataVal = true) {
 
     //data parameter field
-    const dataField = `data`;
+    const dataField = `value`;
 
     if (map.has(key)) {
       //get value 
       let val = map.get(key)
-      //if isDataVal and there is a field data, return the array in the data field. Otherwise return value as it is
-      return (isDataVal && val[dataField]) ? val[dataField] : val;
+      //if isDataVal and there is a field value, return the value in the data field. Otherwise return value as it is
+      return (isDataVal && val.hasOwnProperty(dataField)) ? val[dataField] : val;
     }  else {
       throw new ErrorHandler( 500,
           `getMapValue function: key ${key} is missing in request data map ${JSON.stringify(Object.fromEntries(map))}`
@@ -64,17 +44,23 @@ module.exports = {
     logger.info("hookId is " + hookId);
 
     //CIG Model id extracted from route. If non-existent, use null
-    let cigId = req.params.cigId || null;
+    let cigId = req.params.cigId || 'non-cig-model';
     logger.info("CIG Model is " + cigId);
 
     //derived hook data values
-    let dataMap = new Map(Object.entries(req.body));
+    let dataMap = new Map(req.body);
 
-    res.locals = { hook: hookId, cigTool:  cigId, entries:  dataMap};
+    res.locals = { hook: hookId, cigTool: cigId, entries:  dataMap};
 
     next();
   },
   
+  /**
+   * 
+   * @param {Object} req request
+   * @param {Object} res response
+   * @param {Object} next callback function
+   */
   setResponse: async function (req, res, next) {
     res.status(200).json(res.locals.cdsData);
   }

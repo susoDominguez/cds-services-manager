@@ -1,11 +1,19 @@
 "use strict";
 const logger = require("../../config/winston");
 const { getMapValue } = require("../../cds-services-controller/core_functions");
-
+const {
+  GOLD_GROUP_A,
+GOLD_GROUP_B,
+GOLD_GROUP_C,
+GOLD_GROUP_D,
+GOLD_ASSESSMENT,
+PATIENT_ID,
+ENCOUNTER_ID
+} = process.env;
 //fetch document parameters
-const patientId = 'patientId', copdGroup = 'assessed-copd-group', 
-          groupA = 'copdGroupA', groupB = 'copdGroupB', 
-          groupC = 'copdGroupC', groupD = 'copdGroupD';
+const patientId = (PATIENT_ID || 'patientID'), copdGroup = (GOLD_ASSESSMENT || 'copdSeverityAssessment'), 
+          groupA = (GOLD_GROUP_A || 'goldGroupA_treatmentPriorities'), groupB = (GOLD_GROUP_B || 'goldGroupB_treatmentPriorities'), 
+          groupC = (GOLD_GROUP_C || 'goldGroupC_treatmentPriorities'), groupD = (GOLD_GROUP_D || 'goldGroupD_treatmentPriorities');
 
 /**
  * 
@@ -17,7 +25,7 @@ exports.assess_copd =  function (hookEntries) {
 
   //response object to contain data which will be pass to the next middleware
   let cdsData = {
-    patient: null,
+    patientId: null,
     groupA: null,
     groupB: null,
     groupC: null,
@@ -26,12 +34,12 @@ exports.assess_copd =  function (hookEntries) {
   };
 
   
-  cdsData.patient = getMapValue(patientId, hookEntries);
-  cdsData.groupA = getMapValue(groupA, hookEntries);
-  cdsData.groupB = getMapValue(groupB, hookEntries);
-  cdsData.groupC = getMapValue(groupC, hookEntries);
-  cdsData.groupD = getMapValue(groupD, hookEntries);
-  cdsData.assessedCopdGroup_code = getMapValue(copdGroup, hookEntries);
+  cdsData.patientId = hookEntries.get(patientId);
+  cdsData.groupA = hookEntries.get(groupA);
+  cdsData.groupB = hookEntries.get(groupB);
+  cdsData.groupC = hookEntries.get(groupC);
+  cdsData.groupD = hookEntries.get(groupD);
+  cdsData.assessedCopdGroup_code = hookEntries.get(copdGroup);
 
   return cdsData;
 };
