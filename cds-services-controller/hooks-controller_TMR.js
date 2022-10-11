@@ -10,11 +10,12 @@ const {
 exports.getServicesFromTmr = async function (req, res, next) {
   //get input data
   const hookId = res.locals.hook;
+  const cigsList = res.locals.cigsList;
   const cigTool = "tmr";
 
   logger.info(`hookID is ${hookId}`);
 
-  //data Map
+  //data Map of form {key -> {value, activeCIG}}
   const hookEntries = res.locals.entries;
 
   //response variable to add to parameter res
@@ -22,9 +23,9 @@ exports.getServicesFromTmr = async function (req, res, next) {
 
   switch (hookId) {
     default:
-      // case "DB-HT-OA-merge": case "multimorbidity-merge":
+      // default cases are built uniquely with parameters from cds hooks manager that has a value and a collection of subguidelines
       //process data
-      let {patientId,encounterId,cigId,mergedCig,interactions} = await simpleCigsListMerge(hookEntries)
+      let {patientId,encounterId,cigId,mergedCig,interactions} = await simpleCigsListMerge(hookEntries, cigsList)
         
       let aggregatedForm = await aggregateDataFromTmr(cigId,mergedCig,interactions);
       //logger.info(`aggregatedForm is ${JSON.stringify(aggregatedForm)}`);

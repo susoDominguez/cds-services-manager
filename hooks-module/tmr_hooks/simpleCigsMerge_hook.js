@@ -1,7 +1,7 @@
 "use strict";
 const {getMapValue} = require("../../cds-services-controller/core_functions")
 const {
-  patient, cigsList, encounterId
+  patientId, encounterId
 } = require("../../database_modules/constants.js");
 const logger = require("../../config/winston");
 const {fetchTmrData} = require("./setTmrData")
@@ -11,7 +11,7 @@ const {fetchTmrData} = require("./setTmrData")
  * @param {Map<string,object>} entries Map of hook-related entries
  * @returns object containig patient Id, encounter Id, cig UUID, TMR object with merged CIG and identified interactions
  */
-exports.simpleCigsListMerge = async (entries) => {
+exports.simpleCigsListMerge = async (entries, cigsList) => {
     //var to hold tmr object
     let response = {
         patientId: "dummy patient",
@@ -21,18 +21,18 @@ exports.simpleCigsListMerge = async (entries) => {
         interactions: null
       };
 
-
-    //list of CIGs to merge. MAndatory even when empty list is expected.
-    let involvedCigsList = getMapValue(cigsList, entries);
-    //remove the entry
-    entries.delete(cigsList);
-
     //extract patientId and set
-    if(entries.has(patient)) {
-        response[patient] = getMapValue(patient,entries);
+    if(entries.has(patientId)) {
+        response[patientId] = getMapValue(patientId,entries);
     //remove patientId
-    entries.delete(patient);
+    entries.delete(patientId);
     }
+    //extract patientID and set
+    if(entries.has("patientID")) {
+      response[patientId] = getMapValue("patientID",entries);
+  //remove patientId
+  entries.delete(patientId);
+  }
     
 
     if(entries.has(encounterId)) {
@@ -46,7 +46,7 @@ exports.simpleCigsListMerge = async (entries) => {
     //that is, the cigList field value is not empty
 
     //call setTmrData component
-    const { cigId, mergedCig, interactions } = await fetchTmrData(involvedCigsList,entries);
+    const { cigId, mergedCig, interactions } = await fetchTmrData(cigsList,entries);
     //logger.info(`cigId is ${JSON.stringify(cigId)}`);
     //logger.info(`mergedCig is ${JSON.stringify(mergedCig)}`);
     //set response
