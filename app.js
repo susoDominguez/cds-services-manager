@@ -23,7 +23,7 @@ initDb().then( () =>
 
 // view engine setup
 //environmental variables TODO: define later
-app.set('port', process.env.PORT || 3010)
+app.set('port', process.env.SERVICES_PORT || 3010)
 app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'pug');
 

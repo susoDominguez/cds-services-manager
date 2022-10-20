@@ -1,13 +1,13 @@
 "use strict";
 
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const logger = require("../config/winston");
 
 const {
   MONGODB_HOST,
   MONGODB_PORT,
-  MONGODB_TEMPLATES_DB, 
-  TEMPLATES_COLLECTION_TMR
+  MONGODB_TEMPLATES,
+  MONGODB_CIG_MODEL
 } = process.env;
 
 const {templateSchema} = require("./mongoose_schemas");
@@ -15,7 +15,8 @@ const {templateSchema} = require("./mongoose_schemas");
 
 const db_host = ( MONGODB_HOST || "localhost");
 const db_port = ( MONGODB_PORT || "27017" );
-const db_name = ( MONGODB_TEMPLATES_DB || "templates" );
+const templates_collection = ( MONGODB_TEMPLATES || "templates" );
+const db_name = ( (MONGODB_CIG_MODEL + '-db') || "tmr-db" );
 
 const options = {
   useNewUrlParser: true,
@@ -33,7 +34,7 @@ const url = `mongodb://${db_host}:${db_port}/${db_name}`;
 //Below we instantiate each pre-defined Collection with its associated model
 
 //linked to the template collection
-const TMR_COLLECTION = mongoose.model("Template", templateSchema, ( TEMPLATES_COLLECTION_TMR || "tmr" ) );
+const TMR_COLLECTION = mongoose.model("TemplateTMR", templateSchema, templates_collection );
 
 let _conn;
 

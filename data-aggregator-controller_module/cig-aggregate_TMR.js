@@ -1,8 +1,8 @@
 "use strict";
 const { ErrorHandler } = require("../lib/errorHandler");
 const logger = require("../config/winston");
-const axios = require("axios");
-const qs = require("querystring");
+const axios = require('axios');
+const qs = require('querystring');
 const { TMR_COLLECTION } = require("../database_modules/dbConnection_Mongoose");
 const {
   paramName,

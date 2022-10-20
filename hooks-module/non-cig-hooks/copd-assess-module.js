@@ -13,7 +13,8 @@ ENCOUNTER_ID
 //fetch document parameters
 const patientId = (PATIENT_ID || 'patientID'), copdGroup = (GOLD_ASSESSMENT || 'copdSeverityAssessment'), 
           groupA = (GOLD_GROUP_A || 'goldGroupA_treatmentPriorities'), groupB = (GOLD_GROUP_B || 'goldGroupB_treatmentPriorities'), 
-          groupC = (GOLD_GROUP_C || 'goldGroupC_treatmentPriorities'), groupD = (GOLD_GROUP_D || 'goldGroupD_treatmentPriorities');
+          groupC = (GOLD_GROUP_C || 'goldGroupC_treatmentPriorities'), groupD = (GOLD_GROUP_D || 'goldGroupD_treatmentPriorities'),
+          encounterId = (ENCOUNTER_ID || 'encounterID');
 
 /**
  * 
@@ -26,6 +27,7 @@ exports.assess_copd =  function (hookEntries) {
   //response object to contain data which will be pass to the next middleware
   let cdsData = {
     patientId: null,
+    encounterId: null,
     groupA: null,
     groupB: null,
     groupC: null,
@@ -35,6 +37,7 @@ exports.assess_copd =  function (hookEntries) {
 
   
   cdsData.patientId = hookEntries.get(patientId);
+  cdsData.encounterId = hookEntries.get(encounterId);
   cdsData.groupA = hookEntries.get(groupA);
   cdsData.groupB = hookEntries.get(groupB);
   cdsData.groupC = hookEntries.get(groupC);

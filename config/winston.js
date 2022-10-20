@@ -1,11 +1,12 @@
-var winston = require("winston");
-require("winston-mongodb");
+var winston = require('winston');
+require('winston-mongodb');
 
-const { MONGODB_HOST, MONGODB_PORT, MONGODB_LOGS } = process.env;
+const { MONGODB_HOST, MONGODB_PORT, MONGODB_LOGS_COLLECTION } = process.env;
 
 const db_host = MONGODB_HOST || "localhost";
 const db_port = MONGODB_PORT || "27017";
-const db_name = MONGODB_LOGS || "logs";
+const logs_collection_name = MONGODB_LOGS_COLLECTION || "services_ms_log";
+const db_name = MONGODB_LOGS_COLLECTION || "services_ms_log";
 const url = `mongodb://${db_host}:${db_port}/${db_name}`;
 // define the custom settings for each transport (file, console)
 var options = {
@@ -21,7 +22,7 @@ var options = {
   console: {
     level: "debug",
     handleExceptions: true,
-    json: false,
+    json: true,
     colorize: true,
   },
   mongodb: {
@@ -32,7 +33,7 @@ var options = {
       useUnifiedTopology: true,
     },
     // A collection to save json formatted logs
-    collection: "services_middleware",
+    collection: logs_collection_name,
     storeHost: true,
     format: winston.format.combine(
       winston.format.timestamp(),
