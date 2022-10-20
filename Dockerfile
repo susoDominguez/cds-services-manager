@@ -1,8 +1,15 @@
 # syntax=docker/dockerfile:1
 #Node Base image
 FROM node:16.17.0-alpine
+LABEL org.opencontainers.image.authors="jesus.dominguez@kcl.ac.uk"
 #run a simple process supervisor and init system designed to run as PID 1 inside minimal container environments
-RUN apt-get update && apt-get install -y --no-install-recommends dumb-init
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends dumb-init
+#run git to add tmr2fhirconverter 
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y git
 #RUN apk add dumb-init
 #defining production environment variable
 ENV NODE_ENV=production
@@ -24,6 +31,9 @@ ENV TEMPLATES_COLLECTION=${TEMPLATES_COLLECTION:-$buildtime_TEMPLATES_COLLECTION
 ENV MONGODB_CIG_MODEL=${MONGODB_CIG_MODEL:-$buildtime_MONGODB_CIG_MODEL}
 COPY --chown=node:node . .
 USER node
+#clone public repo tmr2fhirconverter
+RUN cd ./FHIR_converter_module \        
+    git clone https://github.com/jagadish12/SampleTest.git
 EXPOSE ${SERVICES_PORT}
 RUN npm ci --only=production
 HEALTHCHECK \
