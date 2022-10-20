@@ -169,3 +169,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# ignore TMR2FHIRConverter directory
+FHIR_converter_module/
