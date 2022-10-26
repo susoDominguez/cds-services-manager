@@ -3,6 +3,8 @@ const { ErrorHandler } = require("../lib/errorHandler");
 const logger = require("../config/winston");
 const { setCdsCardsFrom_copdAssess } = require("./TMR2FHIRconverter/copd-assess_2_FHIR");
 const { setCdsCardFromTmr } = require("./TMR2FHIRconverter/tmr2fhir_noArg");
+const { setCdsCard } = require("./TMR2FHIRconverter/tmr2fhir-component");
+
 
 module.exports = {
 
@@ -25,6 +27,12 @@ module.exports = {
     next();
   },
 
+  /**
+   * convert TMR-based CIG to FHIR instances
+   * @param {object} req 
+   * @param {object} res 
+   * @param {object} next 
+   */
   getCdsCardsFromTmr: async function (req, res, next) {
 
     //response variable 
@@ -36,11 +44,14 @@ module.exports = {
 
     logger.info(`aggregated TMR form is ${JSON.stringify({ patientId, encounterId, cigId, aggregatedForm })}`);
 
+    //some hooks may need specific mappings
     switch (hookId) {
       default: //case "DB-HT-OA-merge": case "multimorbidity-merge":
+
       aCdsCard = setCdsCardFromTmr({ patientId, encounterId, cigId, aggregatedForm });
         break;
     }
+
     //add CDS Cards response to parameter res
     res.locals.cdsData = aCdsCard;
     //next function

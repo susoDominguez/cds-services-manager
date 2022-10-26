@@ -27,14 +27,7 @@ exports.simpleCigsListMerge = async (entries, cigsList) => {
     //remove patientId
     entries.delete(patientId);
     }
-    //extract patientID and set
-    if(entries.has("patientID")) {
-      response[patientId] = getMapValue("patientID",entries);
-  //remove patientId
-  entries.delete(patientId);
-  }
     
-
     if(entries.has(encounterId)) {
     //extract encounterId and set
     response[encounterId] = getMapValue(encounterId,entries);
@@ -42,13 +35,14 @@ exports.simpleCigsListMerge = async (entries, cigsList) => {
     entries.delete(encounterId);
     }
 
-    //at this point, each entry left has data to combine TMR-based CIGs, 
+    //at this point, each entry left should have left data to combine TMR-based CIGs, 
     //that is, the cigList field value is not empty
 
     //call setTmrData component
     const { cigId, mergedCig, interactions } = await fetchTmrData(cigsList,entries);
     //logger.info(`cigId is ${JSON.stringify(cigId)}`);
     //logger.info(`mergedCig is ${JSON.stringify(mergedCig)}`);
+    //logger.info(`interactions is ${JSON.stringify(interactions)}`);
     //set response
     response.cigId = cigId;
     response.mergedCig = mergedCig;

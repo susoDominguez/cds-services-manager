@@ -2,7 +2,7 @@ module.exports = {
    dataMap: "entries",
    cigId: "cigId",
    hookId: "hookId",
-   ciglist: 'cigList' ,
+   ciglist: 'activeCIG' ,
    cigsList: 'cigsList' ,
      paramName : "parameter",
   isMandatory : "isMandatory",
@@ -41,7 +41,7 @@ patientId: "patientId",
 patient: "patientId",
 encounterId: "encounterId",
 //result object fields
-datalist: 'data',
+paramValue: 'value',
 }
 
 /////////////////////////////////

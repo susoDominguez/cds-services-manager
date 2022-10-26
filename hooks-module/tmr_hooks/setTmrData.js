@@ -17,7 +17,7 @@ const Model = modelArray.find(
 );
 */
 const {
-  datalist, ciglist
+  paramValue, ciglist
 } = require("../../database_modules/constants.js");
 const axios = require("axios");
 const qs = require("querystring");
@@ -154,7 +154,7 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
     const dataset = await createCigRemotely();
 
     //status of creating CIG
-    statusCreatedCig = dataset.status;
+    statusCreatedCig = dataset.status; 
 
     //check dataset is created otherwise fail
     if (statusCreatedCig !== 200)
@@ -171,30 +171,37 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
 
     //combine subguidelines from one CIG and await until they are done
     for (const aCig of involvedCigsList) {
-      logger.info(`cig is ${aCig}`);
+      logger.info(`adding subguidelines for CIG: ${aCig}`);
 
       //create list of sub-guideline identifiers from outcomes in
       let subCigStringList = new Array();
 
-      //value object must contain fields data and cigList of type List for TMR processing tool
-      for (let val of parametersMap.values()) {
+      //value object must contain fields value and activeCIG of type List for TMR processing tool
+      for (let valObj of parametersMap.values()) {
 
-        //check object has both fields of type Array
-        if(!(val[ciglist] && val[datalist] && Array.isArray(val[ciglist]) && Array.isArray(val[datalist]))) 
-          throw new ErrorHandler(500, `processing subguidelines for CIG ${aCig}: expected entry value object with 2 fields of type Array`);
-        
+        //check object hasfield 'value'
+        if(!valObj[paramValue] ) 
+          throw new ErrorHandler(500, `processing subguidelines for CIG ${aCig}: expected object is missing property "value".`);
+        //process only those parameters that have one or more active CIGs
+        if(!valObj[ciglist] || ciglist.length < 1) continue;
+
         //list of CIGs
-        let cigsArr  = val[ciglist];
-        //data value list
-        let dataArr = val[datalist];
+        let cigsArr  = valObj[ciglist];
+        //data value 
+        let dataArr = valObj[paramValue];
         //add subguidelines to guideline CIG
         if (cigsArr.includes(aCig))
+          if(Array.isArray(dataArr)) {
+          //push subcig if nott an array
           Array.prototype.push.apply(subCigStringList, dataArr);
+          } else {
+            subCigStringList.push(dataArr);
+          }
       }
 
       //flatten results
       //subCigStringList = subCigStringList.flat(1);
-      logger.info(subCigStringList.toString());
+      //logger.info("subCigStringList is " + subCigStringList.toString());
 
       //add relevant recommendations to mergedCIG
       let cigsAddedResult = await addSubCigs(aCig, cig_to, subCigStringList);
@@ -215,7 +222,6 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
 
     //fetch interactions
     let interactionsPromise = getInteractions(cig_to);
-    //logger.info(interactionsPromise.data);
 
     //fetch recommendations
     let cigPromise = getMergedCig(cig_to);
@@ -272,6 +278,13 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
     res.locals.cdsData["tmrObject"] = argTemplateBody['TMR'];
     */
 
+  } catch(error){
+    logger.error(`error when accessing TMRWebX: ${JSON.stringify(error)}`);
+    
+    if(error) throw new ErrorHandler(
+      500,
+      error.message
+    )
   } finally {
     //if temporary dataset was created, delete it
     if (statusCreatedCig === 200) {

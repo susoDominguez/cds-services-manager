@@ -43,12 +43,6 @@ module.exports = {
     let hookId = req.params.hook;
     logger.info("hookId is " + hookId);
 
-    //CIG Model id extracted from route. If non-existent, use null
-    //let cigId = req.headers.get(cigId);
-
-   // logger.info("CIG Model is " + cigId);
-
-
     //derived hook data values
     let dataMap = new Map(req.body);
 
