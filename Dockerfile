@@ -19,7 +19,7 @@ WORKDIR /usr/src/app
 COPY --chown=node:node package*.json ./
 ARG buildtime_MONGODB_HOST=127.0.0.1
 ARG buildtime_MONGODB_PORT=2710
-ARG buildtime_MONGODB_LOGS=cds_services
+ARG buildtime_MONGODB_LOGS=services
 ARG buildtime_SERVICES_PORT=3010
 ARG buildtime_TEMPLATES_COLLECTION=templates
 ARG buildtime_MONGODB_CIG_MODEL=tmr

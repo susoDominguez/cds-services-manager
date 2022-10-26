@@ -171,4 +171,4 @@ dist
 .pnp.*
 
 # ignore TMR2FHIRConverter directory
-FHIR_converter_module/
+FHIR_converter_module/TMR2FHIRConverter
