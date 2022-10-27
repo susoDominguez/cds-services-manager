@@ -10,7 +10,7 @@ const {
   TMR_CIG_GET,
   TMR_CIGS_INTERACTIONS,
   ARGUMENTATION_ENGINE_URL,
-  TEMPLATES_COPD,
+  MONGODB_TEMPLATES,
   TMR_HOST,
   TMR_PORT,
   TMR_DB
@@ -18,7 +18,7 @@ const {
 const { modelArray } = require("../../database_modules/dbConnection_Mongoose");
 //instantiate Mongoose model. share with other modules
 const Model = modelArray.find(
-  (model) => model.collection.collectionName === TEMPLATES_COPD
+  (model) => model.collection.collectionName === MONGODB_TEMPLATES
 );
 
 const {

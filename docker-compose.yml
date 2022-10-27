@@ -1,24 +1,21 @@
 version: '3.7'
 services:
   nodejs:
-    build: .
+    build:
+      context: ./cds-services-manager/
+      dockerfile: Dockerfile
     image: road2h-dmims
-    container_name: dmims
+    container_name: services_manager_service
     restart: unless-stopped
     ports:
-      - "80:3000"
+      - "3000:3000"
     environment:
       - MONGODB_HOST=mongodb
       - MONGODB_PORT=27017
-      - MONGODB_DB=road2h
-      - PORT=3000
-      - SUBCIG_COLLECTION=copd-cig-parameters
-      - TEMPLATES=dss-templates
-      - TREATMENT_REVIEW_ROUTE=copd-assess
-      - TREATMENT_SELECT_ROUTE=copd-careplan-select
-      - TEMPLATES_COPD=dss-templates_copd
-      - CIGS_MERGE_ROUTE=DB-HT-OA-merge
-      - DB-PRECONDITIONS_ROUTE=DB-careplan-select
+      - PORT=3010
+      - MONGODB_LOGS=cds_sm_logs
+      - MONGODB_TEMPLATES=templates
+      - MONGODB_CIG_MODEL=tmr
       - TMR_HOST=tmrweb
       - TMR_PORT=8888
       - TMR_DB=tmrweb
@@ -37,7 +34,7 @@ services:
       - tmrwebx_cig_handler
     #command: ./wait-for.sh db:27017 -- /home/node/app/node_modules/.bin/nodemon app.js
   db:
-    image: mongo:latest
+    image: mongo:4.4.17
     restart: unless-stopped
     ports: 
         - "27017:27017"
