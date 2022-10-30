@@ -7,31 +7,31 @@ const {
   setResponse
 } = require("../cds-services-controller/core_functions");
 const {
-  getServicesFromTmr
+  getTmrCigService
 } = require("../cds-services-controller/hooks-controller_TMR");
 const {
   getServices
 } = require("../cds-services-controller/hooks-controller_nonCig");
 const {
-  getCdsCards,
-  getCdsCardsFromTmr
+  getCopdAssessCdsCards,
+  getTmrCdsCards
 } = require("../FHIR_converter_module/FHIR-converter-controller");
 
 /* POST request services where no CIG tool is implicated */
 router.post(
   "/:hook/cigModel/tmr",
   asyncMiddleware(getArguments),
-  asyncMiddleware(getServicesFromTmr),
-  asyncMiddleware(getCdsCardsFromTmr),
+  asyncMiddleware(getTmrCigService),
+  asyncMiddleware(getTmrCdsCards),
   asyncMiddleware(setResponse)
 );
 
 /* POST request services where no CIG tool is implicated */
 router.post(
-  "/:hook",
+  "/copd-assess",
   asyncMiddleware(getArguments),
   asyncMiddleware(getServices),
-  asyncMiddleware(getCdsCards),
+  asyncMiddleware(getCopdAssessCdsCards),
   asyncMiddleware(setResponse)
 );
 

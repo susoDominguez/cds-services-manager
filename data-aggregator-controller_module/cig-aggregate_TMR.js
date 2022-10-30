@@ -3,7 +3,9 @@ const { ErrorHandler } = require("../lib/errorHandler");
 const logger = require("../config/winston");
 const axios = require('axios');
 const qs = require('querystring');
-const { TMR_COLLECTION } = require("../database_modules/dbConnection_Mongoose");
+const { Templates } = require("../database_modules/dbConnection");
+const {callMitigationService} = require("../hooks-module/tmr_hooks/setTmrData");
+//const { ARGUMENTATION_ENGINE_URL }= process.env;
 const {
   paramName,
   labelTemplate,
@@ -14,7 +16,7 @@ const {
   entryField,
   entryTemplate
 } = require("../database_modules/constants.js");
-
+const ARGUMENTATION_ENGINE_URL = 'aba-plus-g.herokuapp.com/generate_explanations';
 //configuration for request call
 let config = {
   method: "post",
@@ -121,7 +123,14 @@ const cig_interactions_label = 'json-template', cig_conflict_label = 'argumentat
   );*/
 }
 
-//apply cig-specific functions to outcome data
+/**
+ * sets and returns aggregatedForm
+ * @param {string} cigId cig id
+ * @param {object} recommendations cig recommendations
+ * @param {object} interactions interactions 
+ * @param {Array} pathActionsList path actioins list
+ * @param {object} aggregatedForm merged cig form
+ */
 function setDataTemplateArgumentation(cigId,recommendations,interactions,pathActionsList,aggregatedForm) {
   //loop over parameters of 'add field in template
   for (const obj of pathActionsList) {
@@ -174,36 +183,52 @@ function setDataTemplateArgumentation(cigId,recommendations,interactions,pathAct
  * @param {string} hookId CDS Hook id
  * @returns {Promise<object>} Form representing combined CIGs and identified interactions.
  */
-exports.aggregateDataFromTmr =  async (cigId,mergedCig,interactions,hookId=undefined) => {
+exports.aggregateDataFromTmr =  async (cigId,mergedCig,interactions) => {
 
     //TODO: when adding conflict resolution engine, depending on hookId use one template or another (w vs w/out conflict)
 
        ///create argumentation request
        let reqBodyTemplateMap = new Map();
        let templateActionsMap = new Map();
+       let aggregatedForm , pathActions;
+       let extensions = null;
    
+    
        //retrieve ALL TEMPLATES for TMR
-       for await (const doc of TMR_COLLECTION.find().lean()) {
+       for await (const doc of Templates.find().lean()) {
          //name of template
          let label = doc[labelTemplate]; 
-   
          //add body template of label
          reqBodyTemplateMap.set(label, doc[bodyTemplate]);
    
          //add list of fields to be updated and corresponding paths
          templateActionsMap.set(label, doc[addTemplate]);
        }
-   
-       //Workflow for aggregating tmr CIG and interactions//
-   
-       //label for json template
-       let aggregatedForm = reqBodyTemplateMap.get(cig_interactions_label);
-       let pathActions = templateActionsMap.get(cig_interactions_label);
+       
+       if(typeof ARGUMENTATION_ENGINE_URL === 'undefined') {
+          //label for json template
+        aggregatedForm = reqBodyTemplateMap.get(cig_interactions_label);
+        pathActions = templateActionsMap.get(cig_interactions_label);
        //logger.info(`aggregatedForm before aggregation is ${JSON.stringify(aggregatedForm)}`)
        //logger.info(`pathActions before aggregation is ${JSON.stringify(pathActions)}`)
-       //update aggregateForm with tmr data
-       setDataTemplateArgumentation(cigId,mergedCig,interactions,pathActions,aggregatedForm);
+    
+       } else {
+          //Workflow for aggregating tmr CIG and interactions//
    
-         //return TMR object from result
-       return aggregatedForm['TMR'];
+       //label for json template
+        aggregatedForm = reqBodyTemplateMap.get(cig_conflict_label);
+        pathActions = templateActionsMap.get(cig_conflict_label);
+       //logger.info(`aggregatedForm before aggregation is ${JSON.stringify(aggregatedForm)}`)
+       //logger.info(`pathActions before aggregation is ${JSON.stringify(pathActions)}`)
+       }
+
+          //update aggregateForm with tmr data
+          setDataTemplateArgumentation(cigId,mergedCig,interactions,pathActions,aggregatedForm);
+
+          if(typeof ARGUMENTATION_ENGINE_URL !== 'undefined')
+             extensions = callMitigationService(aggregatedForm);
+      
+   
+         //return TMR object and possibly extensions from result
+       return {aggregatedForm: aggregatedForm['TMR'], extensions: extensions};
 };

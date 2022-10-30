@@ -23,16 +23,11 @@ const templateSchema = new Schema({
     required: true,
   },
   body: { type: Schema.Types.Mixed, required: true }
+},
+{
+  versionKey: false,
+  timestamps: true,
 });
-
-//
-/*
-const cdsServiceSchema = new Schema({ hook: {type: String, required: true},
-title: {type: String, required: true},
-description: {type: String, required: true},
-id: {type: String, required: true},
-prefetch: {type: Schema.Types.Mixed}});
-*/
 
 
 module.exports = { templateSchema };

@@ -11,10 +11,10 @@ PATIENT_ID,
 ENCOUNTER_ID
 } = process.env;
 //fetch document parameters
-const patientId = (PATIENT_ID || 'patientID'), copdGroup = (GOLD_ASSESSMENT || 'copdSeverityAssessment'), 
+const patientId = (PATIENT_ID || 'patientId'), copdGroup = (GOLD_ASSESSMENT || 'copdSeverityAssessment'), 
           groupA = (GOLD_GROUP_A || 'goldGroupA_treatmentPriorities'), groupB = (GOLD_GROUP_B || 'goldGroupB_treatmentPriorities'), 
           groupC = (GOLD_GROUP_C || 'goldGroupC_treatmentPriorities'), groupD = (GOLD_GROUP_D || 'goldGroupD_treatmentPriorities'),
-          encounterId = (ENCOUNTER_ID || 'encounterID');
+          encounterId = (ENCOUNTER_ID || 'encounterId');
 
 /**
  * 

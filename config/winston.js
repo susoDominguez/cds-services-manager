@@ -1,11 +1,11 @@
 var winston = require('winston');
 require('winston-mongodb');
 
-const { MONGODB_HOST, MONGODB_PORT, MONGODB_LOGS, MONGODB_CIG_MODEL } = process.env;
+const { MONGODB_HOST, MONGODB_PORT, LOGS, MONGODB_CIG_MODEL } = process.env;
 
 const db_host = MONGODB_HOST || "localhost";
 const db_port = MONGODB_PORT || "27017";
-const logs_collection_name = MONGODB_LOGS || "cds_sm_log";
+const logs_collection_name = LOGS || "cds_sm_log";
 const db_name = (MONGODB_CIG_MODEL + "-db") || "tmr-db";
 const url = `mongodb://${db_host}:${db_port}/${db_name}`;
 // define the custom settings for each transport (file, console)

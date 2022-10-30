@@ -5,17 +5,12 @@ const {
   TMR_CIG_ADD,
   TMR_CIG_GET,
   TMR_CIGS_INTERACTIONS,
-  TMR_HOST,
-  TMR_PORT,
-  TMR_DB
+INTERACTION_HOST,
+ INTERACTION_PORT,
+INTERACTION_DB,
+//ARGUMENTATION_ENGINE_URL
 } = process.env;
-/*
-const { modelArray } = require("../../database_modules/dbConnection_Mongoose");
-//instantiate Mongoose model. share with other modules
-const Model = modelArray.find(
-  (model) => model.collection.collectionName === MONGODB_TEMPLATES_DB
-);
-*/
+const ARGUMENTATION_ENGINE_URL = 'aba-plus-g.herokuapp.com/generate_explanations';
 const {
   paramValue, ciglist
 } = require("../../database_modules/constants.js");
@@ -25,7 +20,9 @@ const logger = require("../../config/winston");
 const { ErrorHandler } = require("../../lib/errorHandler");
 
 //building TMR Web URL
-const tmr_url = "http://" + TMR_HOST + ":" + TMR_PORT + "/" + TMR_DB;
+const tmr_url = "http://" + (INTERACTION_HOST || 'localhost') + ":" + (INTERACTION_PORT || '8888') + "/" + (INTERACTION_DB || 'tmrweb');
+  //argumentation engine
+  const resolution_url = "https://" + ARGUMENTATION_ENGINE_URL;
 
 let config = {
   method: "post",
@@ -44,7 +41,7 @@ async function createCigRemotely() {
   });
 
   let configCreate = JSON.parse(JSON.stringify(config));
-  configCreate.url = tmr_url + "/" + TMR_CIG_CREATE;
+  configCreate.url = tmr_url + "/" + (TMR_CIG_CREATE || `guideline/create`);
   configCreate.headers["Content-type"] = "application/x-www-form-urlencoded";
   configCreate.data = data;
 
@@ -58,7 +55,7 @@ async function deleteCigRemotely(cig_id) {
   });
 
   let configDelete = JSON.parse(JSON.stringify(config));
-  configDelete.url = tmr_url + "/" + TMR_CIG_DELETE;
+  configDelete.url = tmr_url + "/" + (TMR_CIG_DELETE || `guideline/delete`);
   configDelete.headers["Content-type"] = "application/x-www-form-urlencoded";
   configDelete.data = data;
 
@@ -76,7 +73,7 @@ async function addSubCigs(cig_from, cig_to, subCigs) {
   });
 
   let configAdd = JSON.parse(JSON.stringify(config));
-  configAdd.url = tmr_url + "/" + TMR_CIG_ADD;
+  configAdd.url = tmr_url + "/" + (TMR_CIG_ADD || 'guidelines/add');
   configAdd.headers["Content-type"] = "application/x-www-form-urlencoded";
   configAdd.data = data;
 
@@ -89,7 +86,7 @@ async function getInteractions(cig_id) {
   });
 
   let configInter = JSON.parse(JSON.stringify(config));
-  configInter.url = tmr_url + "/" + TMR_CIGS_INTERACTIONS;
+  configInter.url = tmr_url + "/" + (TMR_CIGS_INTERACTIONS || 'guidelines/interactions');
   configInter.headers["Content-type"] = "application/x-www-form-urlencoded";
   configInter.data = data;
 
@@ -102,17 +99,14 @@ async function getMergedCig(cig_id) {
   });
 
   let configRecs = JSON.parse(JSON.stringify(config));
-  configRecs.url = tmr_url + "/" + TMR_CIG_GET;
+  configRecs.url = tmr_url + "/" + (TMR_CIG_GET || 'guidelines/cig/get');
   configRecs.headers["Content-type"] = "application/x-www-form-urlencoded";
   configRecs.data = data;
 
   return axios(configRecs);
 }
 
-/*
-//todo: not required
 async function callResolutionEngine(argsObj) {
-  //let data = JSON.stringify(argsObj);
 
   let configArgEngine = JSON.parse(JSON.stringify(config));
   configArgEngine.url = resolution_url;
@@ -121,7 +115,6 @@ async function callResolutionEngine(argsObj) {
 
   return axios(configArgEngine);
 }
-*/
 
 /**
  * Calls TMR processing microservices to merge (parts of) involved CIGs and identify interactions among them.
@@ -130,13 +123,6 @@ async function callResolutionEngine(argsObj) {
  * @returns object of form {cigId, mergedCig, interactions}
  */
 exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
-/*
-  //if collection name is not found, throw error
-  if (!Model)
-    throw Error(
-      "Model collection name is undefined or there is a typo as it could not be found"
-    );
-    */
 
   //response object to contain data which will be pass to the next middleware (cigId | patientId | TMR json object)
   let response = {
@@ -171,6 +157,7 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
 
     //combine subguidelines from one CIG and await until they are done
     for (const aCig of involvedCigsList) {
+
       logger.info(`adding subguidelines for CIG: ${aCig}`);
 
       //create list of sub-guideline identifiers from outcomes in
@@ -299,4 +286,29 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
     //return TMR data
     return response;
   }
+};
+
+exports.callMitigationService = async function (argTemplateBody) {
+
+
+    //call argumentation machine//
+
+    //send TEMPLATES_COPD to resolution engine.
+    let argumentationResponse = await callResolutionEngine(argTemplateBody);
+    let outputResolution = argumentationResponse.data;
+     //logger.info(`outputResolution is ${outputResolution}`);
+    //get its data
+    if (
+      !outputResolution.hasOwnProperty("extensions")
+    ) {
+      logger.error(
+        `argumentation engine is missing expected property 'extensions'`
+      );
+      throw new ErrorHandler(500,
+        `argumentation engine is missing expected property 'extensions'`
+      );
+      
+    } 
+    // ENDS ARGUMENTATION WORKFLOW
+    return outputResolution["extensions"];
 };

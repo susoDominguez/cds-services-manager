@@ -13,12 +13,12 @@ services:
       - MONGODB_HOST=mongodb
       - MONGODB_PORT=27017
       - PORT=3010
-      - MONGODB_LOGS=cds_sm_logs
+      - LOGS=cds_sm_logs
       - MONGODB_TEMPLATES=templates
       - MONGODB_CIG_MODEL=tmr
-      - TMR_HOST=tmrweb
-      - TMR_PORT=8888
-      - TMR_DB=tmrweb
+      - INTERACTION_HOST=tmrweb
+      - INTERACTION_PORT=8888
+      - INTERACTION_DB=tmrweb
       - TMR_CIG_CREATE=guideline/create
       - TMR_CIG_DELETE=guideline/delete
       - TMR_CIG_ADD=guidelines/add

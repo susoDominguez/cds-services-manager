@@ -12,18 +12,18 @@ const xss = require('xss-clean');
 // Environment constiables
 require('dotenv').config();
 const cdsServicesRouter = require('./routes/cds-services-router.js');
-const { initDb } = require('./database_modules/dbConnection_Mongoose');
+//const { initDb } = require('./database_modules/dbConnection_Mongoose');
 
 //create server
 const app = express();
 
 //init DB and Models
-initDb().then( () => 
-  logger.info('database initiated successfully')).catch( err => logger.info('Db not init: ' + err));
+//initDb().then( () => 
+  //logger.info('database initiated successfully')).catch( err => logger.info('Db not init: ' + err));
 
 // view engine setup
 //environmental variables TODO: define later
-app.set('port', process.env.SERVICES_PORT || 3010)
+app.set('port', process.env.PORT || 3010)
 app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'pug');
 

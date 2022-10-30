@@ -2,13 +2,13 @@
 const { ErrorHandler } = require("../lib/errorHandler");
 const logger = require("../config/winston");
 const { setCdsCardsFrom_copdAssess } = require("./TMR2FHIRconverter/copd-assess_2_FHIR");
-const { setCdsCardFromTmr } = require("./TMR2FHIRconverter/tmr2fhir_noArg");
+const { setCdsCard_NonMitigation } = require("./TMR2FHIRconverter/tmr2fhir_noArg");
 const { setCdsCard } = require("./TMR2FHIRconverter/tmr2fhir-component");
 
 
 module.exports = {
 
-  getCdsCards: async function (req, res, next) {
+  getCopdAssessCdsCards: async function (req, res, next) {
     //response variable 
     let aCdsCard;
 
@@ -33,22 +33,27 @@ module.exports = {
    * @param {object} res 
    * @param {object} next 
    */
-  getCdsCardsFromTmr: async function (req, res, next) {
+  getTmrCdsCards: async function (req, res, next) {
 
     //response variable 
     let aCdsCard ;
 
     //get input data
     const hookId = res.locals.hook;
-    const { patientId, encounterId, cigId, aggregatedForm } = res.locals.cdsData;
+    const { patientId, encounterId, cigId, aggregatedForm, extensions } = res.locals.cdsData;
 
-    logger.info(`aggregated TMR form is ${JSON.stringify({ patientId, encounterId, cigId, aggregatedForm })}`);
+    //logger.info(`aggregated TMR form is ${JSON.stringify({ patientId, encounterId, cigId, aggregatedForm })}`);
 
     //some hooks may need specific mappings
     switch (hookId) {
       default: //case "DB-HT-OA-merge": case "multimorbidity-merge":
-
-      aCdsCard = setCdsCardFromTmr({ patientId, encounterId, cigId, aggregatedForm });
+      //if mitigation service is plugged
+      if(extensions !== null) {
+        aCdsCard = setCdsCard({ patientId, encounterId, cigId, aggregatedForm, extensions });
+      } else {
+              //otherwise
+          aCdsCard = setCdsCard_NonMitigation({ patientId, encounterId, cigId, aggregatedForm });
+      }
         break;
     }
 

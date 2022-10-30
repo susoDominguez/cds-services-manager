@@ -7,11 +7,11 @@ const {
   aggregateDataFromTmr
 } = require("../data-aggregator-controller_module/cig-aggregate_TMR");
 
-exports.getServicesFromTmr = async function (req, res, next) {
+exports.getTmrCigService = async function (req, res, next) {
   //get input data
   const hookId = res.locals.hook;
   const cigsList = res.locals.cigsList;
-  const cigTool = "tmr";
+  res.locals.cigTool = "tmr";
 
   //data Map of form {key -> {value, activeCIG}}
   const hookEntries = res.locals.entries;
@@ -26,9 +26,9 @@ exports.getServicesFromTmr = async function (req, res, next) {
 
       let {patientId,encounterId,cigId,mergedCig,interactions} = await simpleCigsListMerge(hookEntries, cigsList)
         
-      let aggregatedForm = await aggregateDataFromTmr(cigId,mergedCig,interactions);
+      let {aggregatedForm, extensions} = await aggregateDataFromTmr(cigId,mergedCig,interactions);
       //logger.info(`aggregatedForm is ${JSON.stringify(aggregatedForm)}`);
-      response = {patientId, encounterId, cigId, aggregatedForm};
+      response = {patientId, encounterId, cigId, aggregatedForm, extensions};
       break;
   }
   //add response to res.locals.cdsData for next function

@@ -11,9 +11,9 @@ const {
   TMR_CIGS_INTERACTIONS,
   ARGUMENTATION_ENGINE_URL,
   MONGODB_TEMPLATES,
-  TMR_HOST,
-  TMR_PORT,
-  TMR_DB
+ INTERACTION_HOST,
+ INTERACTION_PORT,
+ INTERACTION_DB
 } = process.env;
 const { modelArray } = require("../../database_modules/dbConnection_Mongoose");
 //instantiate Mongoose model. share with other modules
@@ -36,9 +36,9 @@ const {
 
 
 //building TMR Web URL
-const tmr_host = TMR_HOST;
-const tmr_port = TMR_PORT;
-const tmr_db = TMR_DB;
+const tmr_host = INTERACTION_HOST;
+const tmr_port = INTERACTION_PORT;
+const tmr_db = INTERACTION_DB;
 const tmr_url = "http://" + tmr_host + ":" + tmr_port + "/" + tmr_db;
 
 //endpoints
@@ -363,7 +363,7 @@ function setDataTemplateArgumentation(
         //value to be added for recommendations case
         val = recommendations;
         break;
-        break;
+       
     }
    // logger.info(`setDataTemplateArgumentation: fieldList is ${JSON.stringify(fieldList)} with value ${JSON.stringify(val)} and object ${JSON.stringify(reqBodyTemplate)}`);
        //add value to object
