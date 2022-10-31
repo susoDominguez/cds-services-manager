@@ -41,15 +41,15 @@ module.exports = {
     //get input data
     const hookId = res.locals.hook;
     const { patientId, encounterId, cigId, aggregatedForm, extensions } = res.locals.cdsData;
-
-    //logger.info(`aggregated TMR form is ${JSON.stringify({ patientId, encounterId, cigId, aggregatedForm })}`);
+    //logger.info(`aggregated TMR form is ${JSON.stringify({ patientId, encounterId, cigId, aggregatedForm , extensions})}`);
 
     //some hooks may need specific mappings
     switch (hookId) {
-      default: //case "DB-HT-OA-merge": case "multimorbidity-merge":
+      default:
       //if mitigation service is plugged
       if(extensions !== null) {
-        aCdsCard = setCdsCard({ patientId, encounterId, cigId, aggregatedForm, extensions });
+
+        aCdsCard = setCdsCard( patientId, encounterId, cigId, aggregatedForm, extensions );
       } else {
               //otherwise
           aCdsCard = setCdsCard_NonMitigation({ patientId, encounterId, cigId, aggregatedForm });

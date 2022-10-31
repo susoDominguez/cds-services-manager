@@ -1,16 +1,17 @@
 "use strict";
+
 const {
   TMR_CIG_CREATE,
   TMR_CIG_DELETE,
   TMR_CIG_ADD,
   TMR_CIG_GET,
   TMR_CIGS_INTERACTIONS,
-INTERACTION_HOST,
- INTERACTION_PORT,
-INTERACTION_DB,
-//ARGUMENTATION_ENGINE_URL
+  INTERACTION_HOST,
+  INTERACTION_PORT,
+  INTERACTION_DB,
+  ARGUMENTATION_ENGINE_URL
 } = process.env;
-const ARGUMENTATION_ENGINE_URL = 'aba-plus-g.herokuapp.com/generate_explanations';
+
 const {
   paramValue, ciglist
 } = require("../../database_modules/constants.js");
@@ -22,7 +23,7 @@ const { ErrorHandler } = require("../../lib/errorHandler");
 //building TMR Web URL
 const tmr_url = "http://" + (INTERACTION_HOST || 'localhost') + ":" + (INTERACTION_PORT || '8888') + "/" + (INTERACTION_DB || 'tmrweb');
   //argumentation engine
-  const resolution_url = "https://" + ARGUMENTATION_ENGINE_URL;
+const resolution_url = ARGUMENTATION_ENGINE_URL ? "https://" + ARGUMENTATION_ENGINE_URL : null;
 
 let config = {
   method: "post",
@@ -111,7 +112,7 @@ async function callResolutionEngine(argsObj) {
   let configArgEngine = JSON.parse(JSON.stringify(config));
   configArgEngine.url = resolution_url;
   configArgEngine.headers["Content-type"] = "application/json";
-  configArgEngine.data = argsObj;
+  configArgEngine.data = JSON.stringify(argsObj);
 
   return axios(configArgEngine);
 }
@@ -222,49 +223,6 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
     response.interactions = interObj.data ? interObj.data : [];
     response.mergedCig = recObj.data ? recObj.data : [];
 
-    /*
-
-    ///create argumentation request
-    let reqBodyTemplateMap = new Map();
-    let templateActionsMap = new Map();
-
-    //retrieve TEMPLATES
-    for await (const doc of Model.find().lean()) {
-      //name of template
-      let label = doc[labelTemplate];
-
-      //add body template of label
-      reqBodyTemplateMap.set(label, doc[bodyTemplate]);
-
-      //add list of fields to be updated and corresponding paths
-      templateActionsMap.set(label, doc[addTemplate]);
-    }
-
-    //Workflow for the argumentation engine//
-
-    //label for json template
-    let labelArgTemplate = "json-template";
-    let argTemplateBody = reqBodyTemplateMap.get(labelArgTemplate);
-    let argumentationFieldsArr = templateActionsMap.get(labelArgTemplate);
-
-    //create argumentation request form
-    setDataTemplateArgumentation(
-      {
-        cigId: cig_to,
-        recommendations: recObjData,
-        interactions: interObjData,
-      },
-      parametersMap,
-      argumentationFieldsArr,
-      argTemplateBody
-    );
-    
-
-    //add results to response for forwarding to next middleware
-    //if arrived here, property TMR exists already
-    res.locals.cdsData["tmrObject"] = argTemplateBody['TMR'];
-    */
-
   } catch(error){
     logger.error(`error when accessing TMRWebX: ${JSON.stringify(error)}`);
     
@@ -310,5 +268,5 @@ exports.callMitigationService = async function (argTemplateBody) {
       
     } 
     // ENDS ARGUMENTATION WORKFLOW
-    return outputResolution["extensions"];
+    return  outputResolution["extensions"];
 };

@@ -26,7 +26,7 @@ exports.getTmrCigService = async function (req, res, next) {
 
       let {patientId,encounterId,cigId,mergedCig,interactions} = await simpleCigsListMerge(hookEntries, cigsList)
         
-      let {aggregatedForm, extensions} = await aggregateDataFromTmr(cigId,mergedCig,interactions);
+      let {aggregatedForm, extensions} = await aggregateDataFromTmr(cigId,mergedCig,interactions, hookEntries);
       //logger.info(`aggregatedForm is ${JSON.stringify(aggregatedForm)}`);
       response = {patientId, encounterId, cigId, aggregatedForm, extensions};
       break;
