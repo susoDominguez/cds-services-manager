@@ -19,11 +19,6 @@ services:
       - INTERACTION_HOST=tmrweb
       - INTERACTION_PORT=8888
       - INTERACTION_DB=tmrweb
-      - TMR_CIG_CREATE=guideline/create
-      - TMR_CIG_DELETE=guideline/delete
-      - TMR_CIG_ADD=guidelines/add
-      - TMR_CIG_GET=guidelines/cig/get
-      - TMR_CIGS_INTERACTIONS=guidelines/interactions
       - ARGUMENTATION_ENGINE_URL=aba-plus-g.herokuapp.com/generate_explanations
     depends_on: 
       - db

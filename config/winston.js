@@ -26,7 +26,7 @@ var options = {
     colorize: true,
   },
   mongodb: {
-    level: "error",
+    level: "info",
     //mongo database connection link
     db: url,
     options: {
