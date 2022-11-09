@@ -180,16 +180,15 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
         //add subguidelines to guideline CIG
         if (cigsArr.includes(aCig))
           if(Array.isArray(dataArr)) {
-          //push subcig if nott an array
+          //push subcig if not an array
           Array.prototype.push.apply(subCigStringList, dataArr);
           } else {
             subCigStringList.push(dataArr);
           }
       }
 
-      //flatten results
-      //subCigStringList = subCigStringList.flat(1);
-      //logger.info("subCigStringList is " + subCigStringList.toString());
+      //remove duplicates from CIG Ids array
+      subCigStringList = Array.from(new Set(subCigStringList)) 
 
       //add relevant recommendations to mergedCIG
       let cigsAddedResult = await addSubCigs(aCig, cig_to, subCigStringList);
