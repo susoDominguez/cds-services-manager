@@ -321,12 +321,13 @@ function setDataTemplateArgumentation(
         break;
 
       case "medications_user_preference":
-        //parameter label
+        //parameter label in MongoDB document
         paramLabelData = "selectedTreatmentPathways"; //user selected
-        let paramLabelData2 = "alternativeTreatmentPathways"; //alternative from same COPD group as suggested by CDS
+        let paramLabelData_altTreatments = "alternativeTreatmentPathways"; //alternative from same COPD group as suggested by CDS
         //get obj from Map
         let selectedDrugs =  getMapValue(paramLabelData, parameterMap, true);
-        let allButSelectedDrugs =  getMapValue(paramLabelData2, parameterMap, true);
+        //it could not be part of the input if empty, then it returns undefined
+        let allButSelectedDrugs =  getMapValue(paramLabelData_altTreatments, parameterMap, true) || [];
 
         if ( Array.isArray(selectedDrugs) && Array.isArray(allButSelectedDrugs) && entry_field &&
         entry_templ ) {

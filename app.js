@@ -90,14 +90,6 @@ body_of_message: req.body || 'no request body'});
   // render the error page
   //res.status(err.status || 500);
 
-
-
-
-
-
-  
-
-
   handleError(err, res);
   //res.json({error: err.message});
 });

@@ -21,12 +21,13 @@ module.exports = {
       //if isDataVal and there is a field value, return the value in the data field. Otherwise return value as it is
       return isDataVal && val.hasOwnProperty(dataField) ? val[dataField] : val;
     } else {
-      throw new ErrorHandler(
-        500,
-        `getMapValue function: key ${key} is missing in request data map ${JSON.stringify(
-          Object.fromEntries(map)
-        )}`
-      );
+      //throw new ErrorHandler(
+      //  500,
+       // `getMapValue function: key ${key} is missing in request data map ${JSON.stringify(
+         // Object.fromEntries(map)
+       // )}`
+     // );
+     return undefined;
     }
   },
 
