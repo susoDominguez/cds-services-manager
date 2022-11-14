@@ -46,13 +46,15 @@ COPY --chown=node:node . .
 
 USER node
 
-EXPOSE ${PORT}
-
 HEALTHCHECK \
     --interval=10s \
     --timeout=5s \
     --start-period=10s \
     --retries=5 \
-    CMD curl -f http://localhost/${PORT}/_health/ \
+    CMD curl -f http://127.0.0.1:${PORT}/_health/ \
     || exit 1
+
+
+EXPOSE ${PORT}
+
 CMD ["dumb-init", "node", "./bin/www"]

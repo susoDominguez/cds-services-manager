@@ -424,7 +424,10 @@ exports.aggregateDataFromTmr = async (cigId, mergedCig, interactions, paramaterM
     //Workflow for aggregating tmr CIG and interactions//
     aggregatedForm = reqBodyTemplateMap.get(cig_conflict_label);
     pathActions = templateActionsMap.get(cig_conflict_label);
-     //update aggregateForm with tmr data
+
+    logger.debug(`pathActions is ${JSON.stringify(pathActions)}`);
+    
+  //update aggregateForm with tmr data
   setDataTemplateArgumentation(
     cigId,
     mergedCig,
