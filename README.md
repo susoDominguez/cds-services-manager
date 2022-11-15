@@ -6,7 +6,7 @@
 
 <img src="heliant_logo.jpeg" width="150">
 
-#### Introduction
+# Introduction
 
 This repository contains an implementation of one of the services which is part of the Microservice Architecture for Guideline Embedding into Decision Support Systems (MAGE-DSS). In particular, this code repository implements an instance of the CDS Services Management (CDS SsM) microservice based on the computable guideline representation model TMR (Transition-based Medical Recommendations).
 
@@ -19,9 +19,11 @@ The structure of the context taken by the CDS-SsM microservice is as follows:
 where the context list contains mappings, in array form, from parameter labels to JSON objects, where each array has at index 0 the name of the parameter (`paramName`), and at index 1 the JSON object with one fixed parameter labelled as `value`, which has the value associated with `paramName`, and an optional parameter field labelled `activeCIG` which contains a list of computable guideline identifiers which are triggered by the contents of `value`, that is, `value` contains one or more TMR-based subguideline or recommendations identifiers. For those mapping where `activeCIG` is `undefined`, then an implementation of the functionality is expected to be part of the CDS-SsM, except for parameters with label `patientId` and `encounterId` as their implementation is added to any TMR-based hook.
 
 
-## Getting started
+# Getting started
 
 This repository is built using either Docker or [NPM](https://www.npmjs.com/). In order to run the microservice locally or build this project, you will need to [install Node ~12.13](https://nodejs.org/en/download/) and [install NPM ~6.13](https://www.npmjs.com/) as well as the database [MongoDb](https://www.mongodb.com/), which contains the templates to store the response from the `TMRWebX` microservices and the logs of the CDS-SsM microservice. We strongly recommend using a Node version manager like [nvm](https://github.com/nvm-sh/nvm) to install Node.js and npm. We do not recommend using a Node installer, since the Node installation process installs npm in a directory with local permissions and can cause permissions errors when you run npm packages globally.
+
+###  Local build
 
 1. Clone the repository
 
@@ -86,4 +88,10 @@ $ cat requirements.txt | xargs npm install -g
 $ DEBUG=dss-road2h:* npm run devstart
 ```
 
-# Dockerised deployment
+### Dockerised deployment
+
+We offer a dockerised version of this service by building the attached `docker-compose` yaml file.
+
+```sh
+
+```
