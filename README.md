@@ -93,5 +93,5 @@ $ DEBUG=dss-road2h:* npm run devstart
 We offer a dockerised version of this service by building the attached `docker-compose` yaml file.
 
 ```sh
-
+$ docker-compose up -d --build
 ```
