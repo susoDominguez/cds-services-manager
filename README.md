@@ -1,46 +1,89 @@
-usage: git [--version] [--help] [-C <path>] [-c <name>=<value>]
-           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
-           [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--bare]
-           [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]
-           [--super-prefix=<path>] [--config-env=<name>=<envvar>]
-           <command> [<args>]
+#### Deployed at
 
-These are common Git commands used in various situations:
+<img src="Kings_College_London-logo.png" width="150">
 
-start a working area (see also: git help tutorial)
-   clone             Clone a repository into a new directory
-   init              Create an empty Git repository or reinitialize an existing one
+#### Integrated with
 
-work on the current change (see also: git help everyday)
-   add               Add file contents to the index
-   mv                Move or rename a file, a directory, or a symlink
-   restore           Restore working tree files
-   rm                Remove files from the working tree and from the index
-   sparse-checkout   Initialize and modify the sparse-checkout
+<img src="heliant_logo.jpeg" width="150">
 
-examine the history and state (see also: git help revisions)
-   bisect            Use binary search to find the commit that introduced a bug
-   diff              Show changes between commits, commit and working tree, etc
-   grep              Print lines matching a pattern
-   log               Show commit logs
-   show              Show various types of objects
-   status            Show the working tree status
+#### Introduction
 
-grow, mark and tweak your common history
-   branch            List, create, or delete branches
-   commit            Record changes to the repository
-   merge             Join two or more development histories together
-   rebase            Reapply commits on top of another base tip
-   reset             Reset current HEAD to the specified state
-   switch            Switch branches
-   tag               Create, list, delete or verify a tag object signed with GPG
+This repository contains an implementation of one of the services which is part of the Microservice Architecture for Guideline Embedding into Decision Support Systems (MAGE-DSS). In particular, this code repository implements an instance of the CDS Services Management (CDS SsM) microservice based on the computable guideline representation model TMR (Transition-based Medical Recommendations).
 
-collaborate (see also: git help workflows)
-   fetch             Download objects and refs from another repository
-   pull              Fetch from and integrate with another repository or a local branch
-   push              Update remote refs along with associated objects
+This implementation offers an algorithm to identify and aggregate clinical recommendations from one or more TMR-based computable guidelines (CGs) using the context included in the request call made by the [CDS Hooks Manager microservice](https://github.com/susoDominguez/cds_hooks_manager) as well as the knowledge reachable by the API of the 'CG Interaction microservice' which is part of the collection of computable guidelines authoring microservice architecture, where a TMR-based implementation of said architecture can be found in [TMRWebX](https://github.com/susoDominguez/TMRWebX). Furthermore, we have implemented a service that converts knowledge from TMR (both guideline knowledge and information on interactions among the aggregated recommendations), and possibly from an external mitigation service, into a [CDS suggestion card](https://cds-hooks.org/#cds-cards). The algorithm to map TMR to FHIR terms is in the [TMR2FHIRconverter repo](https://github.com/susoDominguez/TMR2FHIRconverter). The mitigation service can be found in the [ABAPlusG repo](https://github.com/susoDominguez/ABAPlusG).
 
-'git help -a' and 'git help -g' list available subcommands and some
-concept guides. See 'git help <command>' or 'git help <concept>'
-to read about a specific subcommand or concept.
-See 'git help git' for an overview of the system.
+The point of entry for any TMR-based hook is via `baseURL/cds-services/copd-careplan-review/cigModel/tmr`.
+
+The structure of the context taken by the CDS-SsM microservice is as follows:
+`[["paramName", {"value": val, "activeCIG";[cigIds]}]]`
+where the context list contains mappings, in array form, from parameter labels to JSON objects, where each array has at index 0 the name of the parameter (`paramName`), and at index 1 the JSON object with one fixed parameter labelled as `value`, which has the value associated with `paramName`, and an optional parameter field labelled `activeCIG` which contains a list of computable guideline identifiers which are triggered by the contents of `value`, that is, `value` contains one or more TMR-based subguideline or recommendations identifiers. For those mapping where `activeCIG` is `undefined`, then an implementation of the functionality is expected to be part of the CDS-SsM, except for parameters with label `patientId` and `encounterId` as their implementation is added to any TMR-based hook.
+
+
+## Getting started
+
+This repository is built using either Docker or [NPM](https://www.npmjs.com/). In order to run the microservice locally or build this project, you will need to [install Node ~12.13](https://nodejs.org/en/download/) and [install NPM ~6.13](https://www.npmjs.com/) as well as the database [MongoDb](https://www.mongodb.com/), which contains the templates to store the response from the `TMRWebX` microservices and the logs of the CDS-SsM microservice. We strongly recommend using a Node version manager like [nvm](https://github.com/nvm-sh/nvm) to install Node.js and npm. We do not recommend using a Node installer, since the Node installation process installs npm in a directory with local permissions and can cause permissions errors when you run npm packages globally.
+
+1. Clone the repository
+
+```sh
+$ git clone https://github.com/susoDominguez/cds-services-manager 
+```
+2. Create the MongoDB database `tmr-db` in baseURL `MONGODB_HOST` with port `MONGODB_HOST`. Our default values are `MONGODB_HOST = localhost`
+and `MONGODB_PORT = 27017`. Alternatively, if the docker daemon is installed, pull and run the [docker official image](https://hub.docker.com/_/mongo).
+
+```sh
+$ docker pull mongo
+```
+
+3. Add the templates to the `tmr-db` in `MongoDB`. (both template files have the same content. The difference is that one is in JSON array form). The templates can be located in
+
+```sh
+$ cd MongoDB_templates
+```
+
+
+4. create the environment `.env` text file, to be located in the main folder of the project
+
+```sh
+$ cd ..
+$ touch .env
+$ open .env
+```
+5. and add the following environment variables (and default values)
+
+```
+MONGODB_HOST=localhost
+MONGODB_PORT=27017
+LOGS=cds_sm_logs
+PORT=3010
+INTERACTION_PORT=8888
+INTERACTION_HOST=localhost
+ARGUMENTATION_ENGINE_URL=aba-plus-g.herokuapp.com/generate_explanations
+INTERACTION_DB=tmrweb
+MONGODB_TEMPLATES=templates
+MONGODB_CIG_MODEL=tmr
+TMR_CIG_CREATE=guideline/create
+TMR_CIG_DELETE=guideline/delete
+TMR_CIG_ADD=guidelines/add
+TMR_CIG_GET=guidelines/cig/get
+TMR_CIGS_INTERACTIONS=guidelines/interactions
+INTERACTION_DB=tmrweb
+```
+Environment variables `MONGODB_HOST`, `MONGODB_PORT`, `LOGS`, `MONGODB_TEMPLATES` relates to the instance of the `MongoDb` where `MONGODB_HOST` is the baseURL, `MONGODB_PORT` is the port where MongoDb is reachable, `LOGS` is the collection to store system errors, and `MONGODB_TEMPLATES` is the collection that stores the templates used by the service to transfer responses in JSON format from the `TMRWebX` application (and also to transfer input to the mitigation service `ARGUMENTATION_ENGINE_URL`). `PORT` is the port used by this service. `MONGODB_CIG_MODEL` is the identifier (`tmr`) of the modelling language implemented in this instance of the CDS-SsM microservice. This identifier, among other events, supports the finding of the MongoDb collection used by this service (`tmr-db`).
+`INTERACTION_HOST`, `INTERACTION_PORT` and `INTERACTION_DB` store the baseURL, port and location of the Interactions service that manages the clinical knowledge. Next, variables `TMR_CIG_CREATE`, `TMR_CIG_DELETE`, `TMR_CIG_ADD`, `TMR_CIG_GET` and `TMR_CIGS_INTERACTIONS` store the API endpoints of the Interaction microservice from `TMRWebX`, to create CGs, delete CGs, add recommendations to CGs, get recommendations from CGs, and find interactions in CGs, respectively.
+Finally, `ARGUMENTATION_ENGINE_URL` directs the service to the location where the mitigation service is found. If this env variable is undefined, then the mitigation service is not called and the response CDS card contains at most one FHIR carePlan instance where recommendations are potentially conflictive among them.
+
+
+6. Install the project dependencies
+
+```sh
+$ cat requirements.txt | xargs npm install -g
+```
+
+7. Run the site locally in DEBUG mode
+
+```sh
+$ DEBUG=dss-road2h:* npm run devstart
+```
+
+# Dockerised deployment
