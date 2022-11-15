@@ -22,8 +22,6 @@ services:
       - ARGUMENTATION_ENGINE_URL=aba-plus-g.herokuapp.com/generate_explanations
     depends_on: 
       - db
-    #  - .:/home/node/app
-    #  - node_modules:/home/node/app/node_modules
     networks:
       - dmims
       - tmrwebx_cig_handler
