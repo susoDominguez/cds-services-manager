@@ -1,0 +1,6 @@
+npm-debug.log
+app.log
+.git
+*.md
+.cache
+node-modules/

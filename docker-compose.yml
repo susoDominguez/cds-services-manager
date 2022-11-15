@@ -8,7 +8,7 @@ services:
     container_name: services_manager_service
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3010:3010"
     environment:
       - MONGODB_HOST=mongodb
       - MONGODB_PORT=27017
@@ -36,11 +36,37 @@ services:
       - ~/mongodata:/data/db
     networks:
       - dmims
+      - mongodb_network
+  mongo-seed:
+        build:
+            context: ./MongoDB_templates
+            dockerfile: Dockerfile
+            args:
+                - MONGODB_PORT=27017
+        depends_on:
+            - db
+        networks:
+            - mongodb_network
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: unless-stopped
+    environment:
+    - ME_CONFIG_MONGODB_SERVER=mongodb
+    - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+    depends_on:
+      - db
+    networks:
+    - mongodb_network
+    ports:
+    - 8081:8081
 #external_links: 
 #  - tmrweb
 networks:
   dmims: {}
-  tmrwebx_cig_handler:
-    external: true
-#volumes: 
- # - ~/mongodata:
+ # tmrwebx_cig_handler: {} #intercommunication with TMRwebX
+  mongodb_network: {}
+ # cig_interaction: {} #intercommunication with TMRwebX (alternative)
+volumes: 
+ mongodata:
+   name: mongodata
