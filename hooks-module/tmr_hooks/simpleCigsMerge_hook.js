@@ -21,6 +21,8 @@ exports.simpleCigsListMerge = async (entries, cigsList) => {
         interactions: null
       };
 
+    ///DO ANY PRE_COOKING HERE BEFORE MERGING REMAINING PARAMETERS VALUES FOR INTERACTION SERVICE REQUEST CALLING
+    
     //extract patientId and set
     if(entries.has(patientId)) {
         response[patientId] = getMapValue(patientId,entries);

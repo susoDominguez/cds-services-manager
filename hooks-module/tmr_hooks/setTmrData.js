@@ -9,7 +9,8 @@ const {
   INTERACTION_HOST,
   INTERACTION_PORT,
   INTERACTION_DB,
-  ARGUMENTATION_ENGINE_URL
+  ARGUMENTATION_HOST,
+  ARGUMENTATION_PORT,
 } = process.env;
 
 const {
@@ -22,8 +23,8 @@ const { ErrorHandler } = require("../../lib/errorHandler");
 
 //building TMR Web URL
 const tmr_url = "http://" + (INTERACTION_HOST || 'localhost') + ":" + (INTERACTION_PORT || '8888') + "/" + (INTERACTION_DB || 'tmrweb');
-  //argumentation engine
-const resolution_url = ARGUMENTATION_ENGINE_URL ? "https://" + ARGUMENTATION_ENGINE_URL : null;
+//argumentation engine
+const resolution_url = (typeof ARGUMENTATION_HOST === "undefined") ? null : ( "http://" + ARGUMENTATION_HOST + ( (typeof ARGUMENTATION_PORT === "undefined") ? "" : `:${ARGUMENTATION_PORT}/generate_explanations` ) );
 
 let config = {
   method: "post",

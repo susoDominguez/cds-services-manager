@@ -19,7 +19,8 @@ services:
       - INTERACTION_HOST=tmrweb
       - INTERACTION_PORT=8888
       - INTERACTION_DB=tmrweb
-      - ARGUMENTATION_ENGINE_URL=aba-plus-g.herokuapp.com/generate_explanations
+      - ARGUMENTATION_PORT=5000
+      - ARGUMENTATION_HOST=localhost
     depends_on: 
       - db
     networks:

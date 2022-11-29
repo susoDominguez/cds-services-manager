@@ -8,7 +8,7 @@ const { Templates } = require("../database_modules/dbConnection");
 const {
   callMitigationService,
 } = require("../hooks-module/tmr_hooks/setTmrData");
-const { ARGUMENTATION_ENGINE_URL }= process.env;
+const { ARGUMENTATION_HOST }= process.env;
 const {
   paramName,
   labelTemplate,
@@ -408,7 +408,7 @@ exports.aggregateDataFromTmr = async (cigId, mergedCig, interactions, paramaterM
     templateActionsMap.set(label, doc[addTemplate]);
   }
 
-  if (typeof ARGUMENTATION_ENGINE_URL === "undefined" ||  ARGUMENTATION_ENGINE_URL === null) {
+  if ( (typeof ARGUMENTATION_HOST === "undefined" ||  ARGUMENTATION_HOST === null) )  {
     //label for json template
     aggregatedForm = reqBodyTemplateMap.get(cig_interactions_label);
     pathActions = templateActionsMap.get(cig_interactions_label);
