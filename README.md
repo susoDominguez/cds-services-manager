@@ -60,7 +60,8 @@ LOGS=cds_sm_logs
 PORT=3010
 INTERACTION_PORT=8888
 INTERACTION_HOST=localhost
-ARGUMENTATION_ENGINE_URL=aba-plus-g.herokuapp.com/generate_explanations
+ARGUMENTATION_HOST=localhost
+ARGUMENTATION_PORT=5000
 INTERACTION_DB=tmrweb
 MONGODB_TEMPLATES=templates
 MONGODB_CIG_MODEL=tmr
@@ -71,9 +72,9 @@ TMR_CIG_GET=guidelines/cig/get
 TMR_CIGS_INTERACTIONS=guidelines/interactions
 INTERACTION_DB=tmrweb
 ```
-Environment variables `MONGODB_HOST`, `MONGODB_PORT`, `LOGS`, `MONGODB_TEMPLATES` relates to the instance of the `MongoDb` where `MONGODB_HOST` is the baseURL, `MONGODB_PORT` is the port where MongoDb is reachable, `LOGS` is the collection to store system errors, and `MONGODB_TEMPLATES` is the collection that stores the templates used by the service to transfer responses in JSON format from the `TMRWebX` application (and also to transfer input to the mitigation service `ARGUMENTATION_ENGINE_URL`). `PORT` is the port used by this service. `MONGODB_CIG_MODEL` is the identifier (`tmr`) of the modelling language implemented in this instance of the CDS-SsM microservice. This identifier, among other events, supports the finding of the MongoDb collection used by this service (`tmr-db`).
+Environment variables `MONGODB_HOST`, `MONGODB_PORT`, `LOGS`, `MONGODB_TEMPLATES` relates to the instance of the `MongoDb` where `MONGODB_HOST` is the baseURL, `MONGODB_PORT` is the port where MongoDb is reachable, `LOGS` is the collection to store system errors, and `MONGODB_TEMPLATES` is the collection that stores the templates used by the service to transfer responses in JSON format from the `TMRWebX` application (and also to transfer input to the conflict resolution service `ARGUMENTATION_HOST`). `PORT` is the port used by this service. `MONGODB_CIG_MODEL` is the identifier (`tmr`) of the modelling language implemented in this instance of the CDS-SsM microservice. This identifier, among other events, supports the finding of the MongoDb collection used by this service (`tmr-db`).
 `INTERACTION_HOST`, `INTERACTION_PORT` and `INTERACTION_DB` store the baseURL, port and location of the Interactions service that manages the clinical knowledge. Next, variables `TMR_CIG_CREATE`, `TMR_CIG_DELETE`, `TMR_CIG_ADD`, `TMR_CIG_GET` and `TMR_CIGS_INTERACTIONS` store the API endpoints of the Interaction microservice from `TMRWebX`, to create CGs, delete CGs, add recommendations to CGs, get recommendations from CGs, and find interactions in CGs, respectively.
-Finally, `ARGUMENTATION_ENGINE_URL` directs the service to the location where the mitigation service is found. If this env variable is undefined, then the mitigation service is not called and the response CDS card contains at most one FHIR carePlan instance where recommendations are potentially conflictive among them.
+Finally, `ARGUMENTATION_HOST`, and possibly with port number `ARGUMENTATION_PORT`, directs the service to the location where the conflict resolution service is found. If this env variable is undefined, then the mitigation service is not called and the response CDS card contains at most one FHIR carePlan instance where recommendations are potentially conflictive among them.
 
 
 6. Install the project dependencies

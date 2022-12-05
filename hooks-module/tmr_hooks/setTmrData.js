@@ -24,7 +24,9 @@ const { ErrorHandler } = require("../../lib/errorHandler");
 //building TMR Web URL
 const tmr_url = "http://" + (INTERACTION_HOST || 'localhost') + ":" + (INTERACTION_PORT || '8888') + "/" + (INTERACTION_DB || 'tmrweb');
 //argumentation engine
-const resolution_url = (typeof ARGUMENTATION_HOST === "undefined") ? null : ( "http://" + ARGUMENTATION_HOST + ( (typeof ARGUMENTATION_PORT === "undefined") ? "" : `:${ARGUMENTATION_PORT}/generate_explanations` ) );
+let resolution_url = (typeof ARGUMENTATION_HOST === "undefined") ? null : ( "http://" + ARGUMENTATION_HOST + ( (typeof ARGUMENTATION_PORT === "undefined") ? "" : `:${ARGUMENTATION_PORT}` ) );
+//add postfix to argumentation engine if it does not exist
+if(!resolution_url.endsWith("/generate_explanations")) resolution_url += "/generate_explanations";
 
 let config = {
   method: "post",
@@ -174,9 +176,9 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
         //process only those parameters that have one or more active CIGs
         if(!valObj[ciglist] || ciglist.length < 1) continue;
 
-        //list of CIGs
+        //list of involved CIGs
         let cigsArr  = valObj[ciglist];
-        //data value 
+        //data value with subguideline id(s)
         let dataArr = valObj[paramValue];
         //add subguidelines to guideline CIG
         if (cigsArr.includes(aCig))
@@ -223,6 +225,8 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
     response.interactions = interObj.data ? interObj.data : [];
     response.mergedCig = recObj.data ? recObj.data : [];
 
+    logger.info(`MERGED CG has data: ${JSON.stringify(response.mergedCig)} with interactions detected ${JSON.stringify(response.interactions)}`);
+
   } catch(error){
     logger.error(`error when accessing TMRWebX: ${JSON.stringify(error)}`);
     
@@ -231,6 +235,7 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
       error.message
     )
   } finally {
+    /*
     //if temporary dataset was created, delete it
     if (statusCreatedCig === 200) {
       try {
@@ -241,6 +246,7 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
         );
       }
     }
+    */
     //return TMR data
     return response;
   }
