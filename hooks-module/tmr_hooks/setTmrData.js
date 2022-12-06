@@ -235,7 +235,7 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
       error.message
     )
   } finally {
-    /*
+    
     //if temporary dataset was created, delete it
     if (statusCreatedCig === 200) {
       try {
@@ -246,7 +246,6 @@ exports.fetchTmrData = async function (involvedCigsList, parametersMap) {
         );
       }
     }
-    */
     //return TMR data
     return response;
   }
