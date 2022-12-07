@@ -4,7 +4,8 @@ const logger = require("../config/winston");
 const asyncMiddleware = require("../lib/asyncMiddleware");
 const {
   getArguments,
-  setResponse
+  setResponse,
+  getArgumentsOld
 } = require("../cds-services-controller/core_functions");
 const {
   getTmrCigService
@@ -21,6 +22,15 @@ const {
 router.post(
   "/:hook/cigModel/tmr",
   asyncMiddleware(getArguments),
+  asyncMiddleware(getTmrCigService),
+  asyncMiddleware(getTmrCdsCards),
+  asyncMiddleware(setResponse)
+);
+
+/* POST request services where no CIG tool is implicated */
+router.post(
+  "/copd-careplan-select",
+  asyncMiddleware(getArgumentsOld),
   asyncMiddleware(getTmrCigService),
   asyncMiddleware(getTmrCdsCards),
   asyncMiddleware(setResponse)

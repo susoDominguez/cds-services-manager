@@ -66,6 +66,42 @@ module.exports = {
     next();
   },
 
+   /**
+   *
+   * @param {object} req request object
+   * @param {object} res response object
+   * @param {object} next callback
+   * extracts hook context and arguments, normalises the data and gathers them into an object in the request body
+   */
+    getArgumentsOld: async function (req, res, next) {
+      //GET SPECIFIC HOOK CONTEXT//
+      //hook id extracted from route
+      req.params.hook = "copd-careplan-select";
+      let hookId = req.params.hook;
+      logger.info("hookId is " + hookId);
+  
+      //derived hook data values
+      let dataMap = new Map(req.body);
+  
+        let cigs = new Array();
+        dataMap.forEach((value) => {
+          //if it contains a list of CIGs, add to the array
+          if (
+            value.hasOwnProperty("activeCIG") &&
+            Array.isArray(value["activeCIG"])
+          ) {
+            //if it is not already on array, add
+            value["activeCIG"].map((elem) => {
+              if (!cigs.includes(elem)) cigs.push(elem);
+            });
+          }
+        });
+  
+      res.locals = { hook: hookId, entries: dataMap, cigsList: cigs};
+  
+      next();
+    },
+
   /**
    *
    * @param {Object} req request
