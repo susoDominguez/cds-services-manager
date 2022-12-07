@@ -25,14 +25,7 @@ router.post(
   asyncMiddleware(getTmrCdsCards),
   asyncMiddleware(setResponse)
 );
-//for HELIANT SERVER (old)
-router.post(
-  "/:hook",
-  asyncMiddleware(getArguments),
-  asyncMiddleware(getTmrCigService),
-  asyncMiddleware(getTmrCdsCards),
-  asyncMiddleware(setResponse)
-);
+
 
 /* POST request services where no CIG tool is implicated */
 router.post(
