@@ -27,6 +27,14 @@ router.post(
   asyncMiddleware(setResponse)
 );
 
+router.post(
+  "/:hook/cigModel/demo",
+  asyncMiddleware(getArguments),
+  asyncMiddleware(getTmrCigService),
+  asyncMiddleware(getTmrCdsCards),
+  asyncMiddleware(setResponse)
+);
+
 /* POST request services where no CIG tool is implicated */
 router.post(
   "/copd-careplan-select",
