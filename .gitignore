@@ -172,5 +172,3 @@ dist
 
 # ignore TMR2FHIRConverter directory
 FHIR_converter_module/TMR2FHIRConverter
-data_format_templates/*
-app.log
