@@ -11,19 +11,15 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 // Environment constiables
 require('dotenv').config();
-const cdsServicesRouter = require('./routes/cds-services-router.js');
+const dataConverterRouter = require('./routes/dataConverterRouter.js');
 //const { initDb } = require('./database_modules/dbConnection_Mongoose');
 
 //create server
 const app = express();
 
-//init DB and Models
-//initDb().then( () => 
-  //logger.info('database initiated successfully')).catch( err => logger.info('Db not init: ' + err));
-
 // view engine setup
 //environmental variables TODO: define later
-app.set('port', process.env.PORT || 3010)
+app.set('port', process.env.PORT || 3333)
 app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'pug');
 
@@ -50,11 +46,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Add a health check route in express
 app.get('/_health', (req, res) => {
-  res.status(200).send('ok');
+  res.status(200).send('data converter: OK');
 })
 
 //router
-app.use('/cds-services', limit, cdsServicesRouter);
+app.use('/data-converter', limit, dataConverterRouter);
 
 // catch 404 and forward to error handler
 //app.use(function(req, res, next) {
@@ -94,4 +90,4 @@ body_of_message: req.body || 'no request body'});
   //res.json({error: err.message});
 });
 
-module.exports = app; //DEBUG=dss-road2h:* npm run devstart
+module.exports = app; //DEBUG=data_converter:* npm run devstart

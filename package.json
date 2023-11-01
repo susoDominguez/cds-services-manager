@@ -1,8 +1,8 @@
 {
-  "name": "cds-services-manager",
+  "name": "data_converter",
   "version": "1.1.0",
   "private": true,
-  "description": "A FHIR-based data management interoperability microservice composed of data management controller, data manipulation and data aggregation services to interact with FHIR-integrated EHRs adhere to the CDS HOOKS format",
+  "description": "a component to transform CIG data into other formats",
   "main": "app.js",
   "engines": {
     "node": "~12.13.0",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/susoDominguez/cds-services-manager"
+    "url": "https://github.com/susoDominguez/data_converter"
   },
   "dependencies": {
     "axios": "^1.1.3",
